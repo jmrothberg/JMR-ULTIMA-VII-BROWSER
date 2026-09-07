@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#090806">
+    <title>JMR’S Ultima VII</title>
+    <meta name="description" content="Play JMR’S Ultima VII: The Black Gate and Forge of Virtue in your browser.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="JMR’S Ultima VII">
+    <meta property="og:description" content="The Black Gate and Forge of Virtue—play the original game in your browser.">
+    <meta property="og:url" content="https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/">
+    <meta property="og:image" content="https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="JMR’S Ultima VII">
+    <meta name="twitter:description" content="The Black Gate and Forge of Virtue—play the original game in your browser.">
+    <meta name="twitter:image" content="https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/og.jpg">
+    <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="bar">
+        <div>
+          <p class="eyebrow">JMR’S</p>
+          <h1>Ultima VII: The Black Gate</h1>
+        </div>
+        <div class="actions">
+          <span id="save-state" class="save-state">Saves remain on this device</span>
+          <button id="fullscreen" class="icon-button" type="button" disabled>Fullscreen</button>
+        </div>
+      </header>
+
+      <section class="stage" aria-label="Ultima VII game">
+        <div id="dos" class="dos-host"></div>
+        <div id="gate" class="gate">
+          <div class="sigil" aria-hidden="true">VII</div>
+          <h2>Enter Britannia</h2>
+          <p>The original 1992 game with Forge of Virtue.</p>
+          <button id="start" class="start-button" type="button">Play</button>
+          <div id="progress" class="progress" hidden>
+            <div class="progress-track"><span id="progress-bar"></span></div>
+            <p id="status" role="status">Preparing Britannia…</p>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <span>Mouse and keyboard recommended</span>
+        <span>Ctrl+F11 / Ctrl+F12 adjusts game speed</span>
+      </footer>
+    </main>
+    <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+This repository contains components under different licenses.
+
+The browser runtime used by the application is js-dos/DOSBox, GPL-2.0.
+See https://github.com/caiiiycuk/js-dos for its source and license.
+
+Ultima VII, its executables, artwork, maps, dialogue, audio, and other game
+data are copyrighted by their respective owners. They are not relicensed by
+this repository and are stored here only for the purchaser's private personal
+use. Do not redistribute them.
