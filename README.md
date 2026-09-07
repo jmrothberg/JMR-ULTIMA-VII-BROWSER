@@ -2,7 +2,7 @@
 
 ## [PLAY JMR’S ULTIMA VII](https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/)
 
-A private, browser-playable edition of **Ultima VII: The Black Gate + Forge of Virtue** using the original legally purchased GOG game files.
+A browser-playable edition of **Ultima VII: The Black Gate + Forge of Virtue** using the original legally purchased GOG game files.
 
 The first implementation runs the original DOS release through the open-source js-dos WebAssembly runtime. This preserves the original plot, maps, dialogue, graphics, audio, inventory, combat, schedules, and save system without translating or approximating game behavior.
 
