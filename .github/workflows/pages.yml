@@ -28,6 +28,8 @@ jobs:
           cat game-parts/black-gate.jsdos.part-* > dist/game/black-gate.jsdos
           unzip -t dist/game/black-gate.jsdos
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
