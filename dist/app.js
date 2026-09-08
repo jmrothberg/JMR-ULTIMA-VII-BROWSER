@@ -10,6 +10,13 @@ const dosElement = document.querySelector("#dos");
 
 let player = null;
 let bundleUrl = null;
+let command = null;
+let touchButton = 0;
+let startupTimer;
+const mobileControls = document.querySelector("#touch-controls");
+const hint = document.querySelector("#game-hint");
+const DOS_CONFIG = "[sdl]\nautolock=false\n[dosbox]\nmachine=svga_s3\nmemsize=16\n[render]\nframeskip=0\naspect=false\nscaler=none\n[cpu]\ncore=normal\ncputype=auto\ncycles=fixed 14000\n[mixer]\nrate=44100\nblocksize=1024\nprebuffer=80\n[midi]\nmpu401=intelligent\nmididevice=auto\n[sblaster]\nsbtype=sb16\nsbbase=220\nirq=7\ndma=1\nhdma=5\noplmode=auto\n[dos]\nxms=true\nems=false\numb=true\n[joystick]\njoysticktype=none\n[autoexec]\n@echo off\nmount C .\nC:\nULTIMA7.COM\n";
+
 
 async function fetchWithProgress(url) {
   const response = await fetch(url, { cache: "force-cache" });
@@ -71,7 +78,13 @@ async function startGame() {
     const bundle = await loadGameBundle();
     progressBar.style.width = "100%";
     status.textContent = "Opening the moongate…";
-    bundleUrl = URL.createObjectURL(bundle);
+    if (typeof emulators === "undefined") throw new Error("The emulator library did not load. Reload to retry.");
+    emulators.pathPrefix = "https://v8.js-dos.com/latest/emulators/";
+    const corrected = await emulators.bundleUpdateConfig(
+      new Uint8Array(await bundle.arrayBuffer()),
+      { dosboxConf: DOS_CONFIG, jsdosConf: { version: "8" } }
+    );
+    bundleUrl = URL.createObjectURL(new Blob([corrected], { type: "application/zip" }));
 
     player = Dos(dosElement, {
       url: bundleUrl,
@@ -84,11 +97,34 @@ async function startGame() {
       theme: "dark",
       renderAspect: "4/3",
       imageRendering: "pixelated",
-      mouseCapture: true,
-      thinSidebar: true
+      mouseCapture: false,
+      renderBackend: "canvas",
+      offscreenCanvas: false,
+      softFullscreen: true,
+      fsChanges: { local: true, urlToKey: async () => "jmr-ultima-vii-black-gate-v1" },
+      thinSidebar: true,
+      onEvent(event, ci) {
+        if (event !== "ci-ready") return;
+        command = ci;
+        mobileControls.hidden = false;
+        hint.textContent = "Tap to click; double-tap to use. Choose Walk, then hold where you want to go.";
+        ci.events().onExit(() => {
+          hint.textContent = "The game stopped. Reload to restart.";
+        });
+        let shown = false;
+        ci.events().onFrame((rgb, rgba) => {
+          if (shown || !(rgb || rgba)?.some(value => value > 0)) return;
+          shown = true;
+          clearTimeout(startupTimer);
+          gate.classList.add("hidden");
+        });
+      }
     });
 
-    gate.classList.add("hidden");
+    startupTimer = setTimeout(() => {
+      gate.classList.add("hidden");
+      hint.textContent = "Startup is taking longer than expected. If the screen stays blank, reload and try again.";
+    }, 30000);
     fullscreenButton.disabled = false;
   } catch (error) {
     console.error(error);
@@ -99,7 +135,42 @@ async function startGame() {
 }
 
 startButton.addEventListener("click", startGame);
-fullscreenButton.addEventListener("click", () => player?.setFullScreen(true));
+fullscreenButton.addEventListener("click", () => {
+  document.body.classList.toggle("expanded");
+  fullscreenButton.textContent = document.body.classList.contains("expanded") ? "Exit" : "Expand";
+});
+document.querySelectorAll("[data-game-key]").forEach(button => {
+  button.addEventListener("click", () => command?.simulateKeyPress(Number(button.dataset.gameKey)));
+});
+document.querySelectorAll("[data-touch-button]").forEach(button => {
+  button.addEventListener("click", () => {
+    touchButton = Number(button.dataset.touchButton);
+    document.querySelectorAll("[data-touch-button]").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+    hint.textContent = touchButton === 1 ? "Hold your finger where you want to walk. Lift to stop." : "Tap to click; double-tap to use or talk. Drag to move an item.";
+  });
+});
+let activeTouch = null;
+function releaseTouch() {
+  if (activeTouch !== null) command?.sendMouseButton(activeTouch, false);
+  activeTouch = null;
+}
+for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel"]) {
+  dosElement.addEventListener(type, event => {
+    if (!command || event.pointerType === "mouse" || event.target.tagName !== "CANVAS") return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const rect = event.target.getBoundingClientRect();
+    command.sendMouseMotion(Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)),
+      Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height)));
+    if (type === "pointerdown") {
+      releaseTouch();
+      event.target.setPointerCapture(event.pointerId);
+      activeTouch = touchButton;
+      command.sendMouseButton(activeTouch, true);
+    } else if (type === "pointerup" || type === "pointercancel") releaseTouch();
+  }, { capture: true, passive: false });
+}
+window.addEventListener("blur", releaseTouch);
 window.addEventListener("beforeunload", () => {
   if (bundleUrl) URL.revokeObjectURL(bundleUrl);
 });
