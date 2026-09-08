@@ -23,6 +23,18 @@
       .dos-host .soft-keyboard { flex-shrink:0; max-height:65%; overflow:auto; margin:4px; touch-action:manipulation; }
       .dos-host .soft-keyboard .kbd { font-size:clamp(11px,2.7vw,16px); min-width:20px; padding:3px; }
       .dos-host .soft-keyboard .gap-2 { gap:3px; }
+      #tutorial { width:min(720px,94vw); max-height:88dvh; padding:0; color:#f3e7c8; background:#21190e; border:1px solid #aa8337; border-radius:14px; overflow:auto; font:16px/1.6 system-ui,sans-serif; }
+      #tutorial::backdrop { background:#000b; }
+      .tutorial-heading { position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 20px; background:#21190e; border-bottom:1px solid #715727; z-index:1; }
+      .tutorial-heading h2 { margin:0; font-size:22px; }
+      .tutorial-body { padding:0 20px 24px; }
+      .tutorial-body h3 { color:#e9bc66; margin:26px 0 8px; }
+      .tutorial-body a { color:#f2c775; text-decoration:underline; }
+      .tutorial-body li { margin:8px 0; }
+      .tutorial-body ol,.tutorial-body ul { padding-left:24px; }
+      .tutorial-body details { border-top:1px solid #715727; padding:14px 0; }
+      .tutorial-body summary { cursor:pointer; font-weight:700; min-height:44px; }
+      body:has(#tutorial[open]) { overflow:hidden; }
     </style>
   </head>
   <body>
@@ -34,6 +46,7 @@
         </div>
         <div class="actions">
           <span id="save-state" class="save-state">Saves remain on this device</span>
+          <button id="open-tutorial" class="icon-button" type="button" aria-haspopup="dialog">How to Play</button>
           <button id="fullscreen" class="icon-button" type="button" disabled>Expand</button>
         </div>
       </header>
@@ -59,7 +72,8 @@
         <button type="button" data-game-key="257">Enter</button>
         <button type="button" data-game-key="256">Esc / Skip</button>
         <button type="button" data-game-key="73">Inventory</button>
-        <button type="button" data-game-key="32">Combat</button>
+        <button type="button" data-game-key="67">Combat</button>
+        <button type="button" data-game-key="83">Save / Load</button>
       </section>
       <form id="typing-form" hidden style="padding:12px;border:1px solid #916b27">
         <label for="typing-input">Type a name or answer, then Send</label>
@@ -73,8 +87,63 @@
         <span>Ctrl+F11 / Ctrl+F12 adjusts game speed</span>
       </footer>
     </main>
+    <dialog id="tutorial" aria-labelledby="tutorial-title">
+      <div class="tutorial-heading">
+        <h2 id="tutorial-title">How to Play</h2>
+        <button id="close-tutorial" class="icon-button" type="button" autofocus>Close</button>
+      </div>
+      <div class="tutorial-body">
+        <p>Welcome to JMR’S Ultima VII. This is the original game inside a browser player, with extra controls for your fingers. You can reopen this guide at any time. The game pauses while this guide is open.</p>
+        <h3>1. Your first session</h3>
+        <ol>
+          <li>Close this guide and tap <strong>Play</strong>. The game data is about 8 MB; the player downloads additional files. Watch the loading message and allow startup to finish.</li>
+          <li>Watch the introduction or tap <strong>Esc / Skip</strong>. Choose <strong>Start New Game</strong>, enter a name, choose your character, then select <strong>Journey Onward</strong>.</li>
+          <li>For the name prompt, tap <strong>iPhone / iPad Keyboard</strong>, type your name, and tap <strong>Send + Enter</strong>. Close the keyboard afterward.</li>
+          <li>Use <strong>Use / Talk</strong> for menu choices. The highlighted control tells you which touch mode is active.</li>
+        </ol>
+        <h3>2. Walk, talk, and handle objects</h3>
+        <p><strong>Walk:</strong> select Walk, then hold a finger on the game in your desired direction. Lift to stop. Hold farther from your character to move faster.</p>
+        <p><strong>Use / Talk:</strong> select this mode before interacting. Tap once to identify an object; double-tap to use it or talk. Hold and drag to move an item. Double-tap containers to open them. Tap dialogue choices and choose Bye to finish.</p>
+        <p>If tapping a person makes you walk, switch back to <strong>Use / Talk</strong>. These two buttons change what touches on the game do; they do not move the character by themselves.</p>
+        <h3>3. Your first investigation</h3>
+        <p>In Trinsic, speak with Iolo and the mayor, then investigate the stables. Examine clues and ask people about them. Keep your own notes of names and leads.</p>
+        <h3>4. Equipment and fighting</h3>
+        <p><strong>Inventory / I:</strong> open equipment; drag items onto your character or into an open pack. The heart icon shows status. <strong>Combat / C:</strong> toggle fighting. A red cursor means combat; switch it off before talking. Equip your party and watch their health. Double-tap a spellbook to browse spells.</p>
+        <h3>5. Three keyboard options</h3>
+        <details open>
+          <summary>iPhone / iPad’s normal keyboard</summary>
+          <p>Tap <strong>iPhone / iPad Keyboard</strong> below the game. Tap the text field if the Apple keyboard does not appear. Type a name or other requested answer, then tap <strong>Send + Enter</strong>. The complete text is sent to the game, followed by Enter.</p>
+          <p>This field is for text prompts, not walking or shortcuts. It accepts English letters, numbers, spaces, periods, commas, apostrophes, and hyphens. Other characters are skipped. Close it with <strong>Close keyboard</strong> to recover screen space.</p>
+        </details>
+        <details>
+          <summary>The player’s pull-out keyboard</summary>
+          <p>Tap the keyboard-shaped icon in the player’s side strip. It opens a full QWERTY layout with a number row, Shift, Backspace, Space, Enter, Esc, and arrows. Each key goes directly to the game; no Send button is needed. Tap the keyboard icon again to dismiss it.</p>
+          <p>Use this for single-key commands or when you need to edit text already inside the game. On a small screen, rotate the device and scroll the keyboard area if necessary.</p>
+        </details>
+        <details>
+          <summary>An attached iPad or Bluetooth keyboard</summary>
+          <p>The player supports physical keyboard input. Close the text-entry field and this guide, then tap the game to give it focus. Use the keyboard normally. If letters appear in the page’s text field instead, close that field first. Some system shortcuts remain controlled by iPadOS or your browser.</p>
+          <p>The large buttons below the game send the same commands without a physical keyboard: <strong>Enter</strong>, <strong>Esc / Skip</strong>, <strong>Inventory</strong>, <strong>Combat</strong>, and <strong>Save / Load</strong>.</p>
+        </details>
+        <h3>6. Save and return</h3>
+        <p><strong>Save / Load / S:</strong> opens the original save window. Select a slot, enter a description, and save. Use multiple slots. Journey Onward resumes your last saved game.</p>
+        <p>After saving inside the game, use the <strong>floppy-disk icon in the player’s side strip</strong> to preserve the changed game files in this browser. Let that operation finish before closing the tab. The original game’s save window and the browser player’s disk icon serve different steps.</p>
+        <p>Saves belong to this browser on this device; opening the same link on another device does not transfer them. Clearing website data can remove them. Keep using the same browser when continuing an adventure.</p>
+        <h3>7. Make the screen comfortable</h3>
+        <p><strong>Expand</strong> uses more of the page; <strong>Exit</strong> restores the normal layout. It does not close your game. Landscape usually gives an iPhone more usable game space. Portrait also works; scroll below the game to reach controls. Close either keyboard when you no longer need it.</p>
+        <h3>8. If something seems stuck</h3>
+        <ul>
+          <li><strong>A conversation will not advance:</strong> choose Use / Talk and tap the game or a displayed response.</li>
+          <li><strong>A window blocks the view:</strong> tap Esc / Skip to close game windows.</li>
+          <li><strong>A tap only names an object:</strong> use a quick double-tap to interact.</li>
+          <li><strong>The game is blank:</strong> check the startup message and give it time. If it remains blank, reload and tap Play again. Unsaved play can be lost on reload.</li>
+          <li><strong>No keyboard input:</strong> close this guide and the typing field, then tap the game. Use the large buttons to check that input reaches it.</li>
+        </ul>
+        <p>For the complete original rules, spellbook, statistics, and combat modes, see the <a href="https://www.mocagh.org/origin/u7-refcard.pdf" target="_blank" rel="noopener">original Ultima VII Player Reference Card (PDF)</a>.</p>
+      </div>
+    </dialog>
     <script src="https://v8.js-dos.com/latest/emulators/emulators.js"></script>
     <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
-    <script src="./app.js?v=keyboard-3"></script>
+    <script src="./app.js?v=tutorial-1"></script>
   </body>
 </html>
