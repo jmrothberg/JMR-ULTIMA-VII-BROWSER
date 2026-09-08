@@ -18,7 +18,7 @@
     <meta name="twitter:description" content="The Black Gate and Forge of Virtue—play the original game in your browser.">
     <meta name="twitter:image" content="https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/dist/og.jpg">
     <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css?v=mobile-2">
   </head>
   <body>
     <main class="shell">
@@ -29,7 +29,7 @@
         </div>
         <div class="actions">
           <span id="save-state" class="save-state">Saves remain on this device</span>
-          <button id="fullscreen" class="icon-button" type="button" disabled>Fullscreen</button>
+          <button id="fullscreen" class="icon-button" type="button" disabled>Expand</button>
         </div>
       </header>
 
@@ -47,12 +47,22 @@
         </div>
       </section>
 
+      <section id="touch-controls" class="touch-controls" aria-label="Game controls" hidden>
+        <button type="button" data-touch-button="0" aria-pressed="true">Use / Talk</button>
+        <button type="button" data-touch-button="1" aria-pressed="false">Walk</button>
+        <button type="button" data-game-key="13">Enter</button>
+        <button type="button" data-game-key="27">Esc / Skip</button>
+        <button type="button" data-game-key="73">Inventory</button>
+        <button type="button" data-game-key="32">Combat</button>
+      </section>
+      <p id="game-hint" class="game-hint" role="status">Made for touch. The keyboard icon opens an on-screen keyboard.</p>
       <footer>
-        <span>Mouse and keyboard recommended</span>
+        <span>Touch controls • Rotate for a larger view</span>
         <span>Ctrl+F11 / Ctrl+F12 adjusts game speed</span>
       </footer>
     </main>
+    <script src="https://v8.js-dos.com/latest/emulators/emulators.js"></script>
     <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
-    <script src="./app.js?v=split-loader-1"></script>
+    <script src="./app.js?v=mobile-2"></script>
   </body>
 </html>
