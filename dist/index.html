@@ -19,6 +19,11 @@
     <meta name="twitter:image" content="https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/dist/og.jpg">
     <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css">
     <link rel="stylesheet" href="./styles.css?v=mobile-2">
+    <style>
+      .dos-host .soft-keyboard { flex-shrink:0; max-height:65%; overflow:auto; margin:4px; touch-action:manipulation; }
+      .dos-host .soft-keyboard .kbd { font-size:clamp(11px,2.7vw,16px); min-width:20px; padding:3px; }
+      .dos-host .soft-keyboard .gap-2 { gap:3px; }
+    </style>
   </head>
   <body>
     <main class="shell">
@@ -50,11 +55,18 @@
       <section id="touch-controls" class="touch-controls" aria-label="Game controls" hidden>
         <button type="button" data-touch-button="0" aria-pressed="true">Use / Talk</button>
         <button type="button" data-touch-button="1" aria-pressed="false">Walk</button>
+        <button type="button" id="native-keyboard">iPhone / iPad Keyboard</button>
         <button type="button" data-game-key="257">Enter</button>
         <button type="button" data-game-key="256">Esc / Skip</button>
         <button type="button" data-game-key="73">Inventory</button>
         <button type="button" data-game-key="32">Combat</button>
       </section>
+      <form id="typing-form" hidden style="padding:12px;border:1px solid #916b27">
+        <label for="typing-input">Type a name or answer, then Send</label>
+        <input id="typing-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="display:block;width:100%;font-size:18px;padding:12px;margin:8px 0;color:#fff;background:#241a0d;border:1px solid #916b27">
+        <button type="submit" class="icon-button">Send + Enter</button>
+        <button type="button" id="close-typing" class="icon-button">Close keyboard</button>
+      </form>
       <p id="game-hint" class="game-hint" role="status">Made for touch. The keyboard icon opens an on-screen keyboard.</p>
       <footer>
         <span>Touch controls • Rotate for a larger view</span>
@@ -63,6 +75,6 @@
     </main>
     <script src="https://v8.js-dos.com/latest/emulators/emulators.js"></script>
     <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
-    <script src="./app.js?v=mobile-2"></script>
+    <script src="./app.js?v=keyboard-3"></script>
   </body>
 </html>
