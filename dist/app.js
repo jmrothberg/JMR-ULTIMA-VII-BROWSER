@@ -114,6 +114,7 @@ async function startGame() {
       onEvent(event, ci) {
         if (event !== "ci-ready") return;
         command = ci;
+        if (tutorial.open) command.pause();
         mobileControls.hidden = false;
         hint.textContent = "Tap to click; double-tap to use. Choose Walk, then hold where you want to go.";
         ci.events().onExit(() => {
@@ -184,6 +185,22 @@ window.addEventListener("beforeunload", () => {
 });
 
 const typingForm = document.querySelector("#typing-form");
+const tutorial = document.querySelector("#tutorial");
+document.querySelector("#open-tutorial").addEventListener("click", () => {
+  releaseTouch();
+  tutorial.showModal();
+  command?.pause();
+});
+document.querySelector("#close-tutorial").addEventListener("click", () => tutorial.close());
+tutorial.addEventListener("close", () => {
+  command?.resume();
+  document.querySelector("#open-tutorial").focus();
+});
+for (const type of ["keydown", "keyup", "keypress"]) {
+  window.addEventListener(type, event => {
+    if (tutorial.open) event.stopImmediatePropagation();
+  }, true);
+}
 const typingInput = document.querySelector("#typing-input");
 document.querySelector("#native-keyboard").addEventListener("click", () => {
   typingForm.hidden = false;
