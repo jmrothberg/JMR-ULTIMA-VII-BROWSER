@@ -102,6 +102,14 @@ async function startGame() {
       offscreenCanvas: false,
       softFullscreen: true,
       fsChanges: { local: true, urlToKey: async () => "jmr-ultima-vii-black-gate-v1" },
+      softKeyboardLayout: [
+        "1 2 3 4 5 6 7 8 9 0",
+        "q w e r t y u i o p",
+        "a s d f g h j k l",
+        "{shift} z x c v b n m {bksp}",
+        "{esc} {space} {enter} {up} {down} {left} {right}"
+      ],
+      softKeyboardSymbols: [{ "{bksp}": "⌫", "{enter}": "Enter", "{space}": "Space", "{shift}": "Shift", "{esc}": "Esc", "{up}": "↑", "{down}": "↓", "{left}": "←", "{right}": "→" }],
       thinSidebar: true,
       onEvent(event, ci) {
         if (event !== "ci-ready") return;
@@ -173,4 +181,48 @@ for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel"])
 window.addEventListener("blur", releaseTouch);
 window.addEventListener("beforeunload", () => {
   if (bundleUrl) URL.revokeObjectURL(bundleUrl);
+});
+
+const typingForm = document.querySelector("#typing-form");
+const typingInput = document.querySelector("#typing-input");
+document.querySelector("#native-keyboard").addEventListener("click", () => {
+  typingForm.hidden = false;
+  typingInput.focus();
+});
+document.querySelector("#close-typing").addEventListener("click", () => {
+  typingInput.blur();
+  typingForm.hidden = true;
+});
+for (const type of ["keydown", "keyup", "keypress"]) {
+  window.addEventListener(type, event => {
+    if (event.target !== typingInput) return;
+    event.stopImmediatePropagation();
+    if (type === "keydown" && event.key === "Enter" && !event.isComposing) {
+      event.preventDefault();
+      typingForm.requestSubmit();
+    }
+  }, true);
+}
+typingForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!command || typingForm.dataset.busy) return;
+  typingForm.dataset.busy = "true";
+  const text = typingInput.value;
+  typingInput.value = "";
+  try {
+    for (const char of text) {
+      const upper = /[A-Z]/.test(char);
+      const code = char === " " ? 32 : /^[a-zA-Z0-9]$/.test(char) ? char.toUpperCase().charCodeAt(0) : ({".":46,",":44,"'":39,"-":45})[char];
+      if (!code) continue;
+      if (upper) command.sendKeyEvent(340, true);
+      command.sendKeyEvent(code, true);
+      await new Promise(resolve => setTimeout(resolve, 35));
+      command.sendKeyEvent(code, false);
+      if (upper) command.sendKeyEvent(340, false);
+      await new Promise(resolve => setTimeout(resolve, 35));
+    }
+    command.simulateKeyPress(257);
+  } finally {
+    delete typingForm.dataset.busy;
+  }
 });
