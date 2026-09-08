@@ -1,6 +1,6 @@
 # JMR’S Ultima VII
 
-## [PLAY JMR’S ULTIMA VII](https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/)
+## [PLAY JMR’S ULTIMA VII](https://jmrothberg.github.io/JMR-ULTIMA-VII-BROWSER/dist/)
 
 A browser-playable edition of **Ultima VII: The Black Gate + Forge of Virtue** using the original legally purchased GOG game files.
 
